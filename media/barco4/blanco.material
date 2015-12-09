@@ -1,0 +1,17 @@
+// blanco genrated by blender2ogre 0.6.0
+
+material blanco 
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass blanco
+        {
+            ambient 1.0 1.0 1.0 1.0
+            diffuse 0.8897638320922852 0.8897638320922852 0.8897638320922852 1.0
+            
+
+        }
+    }
+}

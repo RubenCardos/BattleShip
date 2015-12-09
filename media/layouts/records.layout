@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GUILayout version="4">
+  <Window type="DefaultWindow" name="credito">
+    <Property name="Area" value="{{0.0,0},{0.0,0},{1,0},{1,0}}" />
+
+    <Window type="TaharezLook/Button" name="exitButton" >
+      <Property name="Text" value="Salir" />
+      <Property name="Area" value="{{0.05,0},{0.05,0},{0.50,0},{0.11,0}}"/>
+    </Window>
+
+    
+  </Window>
+</GUILayout>

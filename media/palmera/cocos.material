@@ -1,0 +1,35 @@
+// cocos genrated by blender2ogre 0.6.0
+
+material cocos 
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass cocos
+        {
+            ambient 0.3588392436504364 0.1657041311264038 0.004706157371401787 1.0
+            diffuse 0.3588392436504364 0.1657041311264038 0.004706157371401787 1.0
+            specular 0.17114093899726868 0.17114093899726868 0.17114093899726868 1.0 12.5
+            emissive 0.0 0.0 0.0 1.0
+
+            alpha_to_coverage off
+            colour_write on
+            cull_hardware clockwise
+            depth_check on
+            depth_func less_equal
+            depth_write on
+            illumination_stage 
+            light_clip_planes off
+            light_scissor off
+            lighting on
+            normalise_normals off
+            polygon_mode solid
+            scene_blend one zero
+            scene_blend_op add
+            shading gouraud
+            transparent_sorting on
+
+        }
+    }
+}

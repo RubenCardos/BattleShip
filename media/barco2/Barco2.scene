@@ -1,0 +1,91 @@
+<scene exported_by="lucia" export_time="1448557029.6349795" formatVersion="1.0.1" previous_export_time="0" >
+  <nodes >
+    <node name="Palo Vela Mayor" >
+      <position z="0.146845" x="-0.216829" y="0.551502" />
+      <rotation qz="-0.000000" qx="0.000000" qw="1.000000" qy="0.000000" />
+      <scale z="0.100000" x="0.100000" y="1.400000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity mass_radius="1.0" lock_trans_y="False" meshFile="Cylinder.mesh" friction_x="1.0" friction_y="1.0" velocity_max="0.0" inertia_tensor="0.4000000059604645" velocity_min="0.0" lock_trans_z="False" physics_type="STATIC" anisotropic_friction="False" damping_trans="0.03999999910593033" lock_trans_x="False" ghost="False" name="Cylinder" friction_z="1.0" actor="False" mass="1.0" damping_rot="0.10000000149011612" lock_rot_x="False" lock_rot_z="False" lock_rot_y="False" />
+    </node>
+    <node name="Lamp" >
+      <position z="1.559607" x="-3.794607" y="4.117953" />
+      <rotation qz="-0.272171" qx="0.169076" qw="0.570947" qy="0.755880" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light name="Lamp" type="point" powerScale="1.0" >
+        <position z="1.559607" x="-3.794607" y="4.117953" />
+        <lightAttenuation range="5000" constant="1.0" linear="0.03333335240683057" quadratic="0.0" />
+        <colourDiffuse g="1.0" b="1.0" r="1.0" />
+        <colourSpecular g="1.0" b="1.0" r="1.0" />
+      </light>
+    </node>
+    <node name="Camera" >
+      <position z="7.195660" x="-5.921311" y="5.111750" />
+      <rotation qz="0.146191" qx="0.499763" qw="0.816654" qy="-0.248880" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera fov="0.5033799435163735" name="Camera" projectionType="perspective" >
+        <clipping near="0.10000000149011612" nearPlaneDist="0.10000000149011612" farPlaneDist="100.0" far="100.0" />
+      </camera>
+    </node>
+    <node name="Lamp.001" >
+      <position z="-0.202622" x="-0.876330" y="4.117953" />
+      <rotation qz="-0.272171" qx="0.169076" qw="0.570947" qy="0.755880" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light name="Lamp.001" type="point" powerScale="1.0" shadow="true" >
+        <position z="-0.202622" x="-0.876330" y="4.117953" />
+        <lightAttenuation range="5000" constant="1.0" linear="0.03333335240683057" quadratic="0.0" />
+        <colourDiffuse g="1.0" b="1.0" r="1.0" />
+        <colourSpecular g="1.0" b="1.0" r="1.0" />
+        <colourShadow g="1.0" b="1.0" r="1.0" />
+      </light>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Madera.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Blanco.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Madera.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Negro.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Metal.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Negro.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Metal.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Negro.004.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco2/Metal.004.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourAmbient g="0.0" b="0.0" r="0.0" />
+    <colourBackground g="0.05087608844041824" b="0.05087608844041824" r="0.05087608844041824" />
+    <colourDiffuse g="0.05087608844041824" b="0.05087608844041824" r="0.05087608844041824" />
+  </environment>
+</scene>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GUILayout version="4">
+  <Window type="DefaultWindow" name="Cfg" >
+    <Property name="Area" value="{{0.0,0},{0.0,0},{1,0},{1,0}}" />
+    <Window type="TaharezLook/StaticText" name="Text1">
+      <Property name="Area" value="{{0.01,0},{0.05,0},{0.28,0},{0.20,0}}"/>
+    </Window>
+
+    <!-- Exit button -->
+    <Window type="TaharezLook/Button" name="exitButton" >
+      <Property name="Text" value="Salir" />
+      <Property name="Area" value="{{0.05,0},{0.05,0},{0.20,0},{0.11,0}}"/>
+    </Window>
+    <!-- Apply button -->
+    <Window type="TaharezLook/Button" name="recordsButton" >
+      <Property name="Text" value="Records" />
+      <Property name="Area" value="{{0.05,0},{0.05,0},{0.20,0},{0.11,0}}"/> <!-- X,Y,LARGO,ANCHO-->
+    </Window>
+    <Window type="TaharezLook/Button" name="nextShipButton" >
+      <Property name="Text" value="Siguiente" />
+      <Property name="Area" value="{{0.05,0},{0.05,0},{0.20,0},{0.11,0}}"/>
+    </Window>
+    <Window type="TaharezLook/Button" name="controlsButton" >
+      <Property name="Text" value="Controles" />
+      <Property name="Area" value="{{0.05,0},{0.05,0},{0.20,0},{0.11,0}}"/>
+    </Window>
+  </Window>
+</GUILayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GUILayout version="4">
+  <Window type="DefaultWindow" name="Cfg" >
+    <Property name="Area" value="{{0.0,0},{0.0,0},{1,0},{1,0}}" />
+
+  
+    <!-- Area: Ancho Boton X, Boton Y -->
+    <Window type="TaharezLook/Button" name="playButton" >
+      <Property name="Text" value="Play" />
+      <Property name="Area" value="{{0.580,0},{0.825,0},{0.768,0},{0.969,0}}" />
+    </Window>
+
+    <Window type="TaharezLook/Button" name="creditButton" >
+      <Property name="Text" value="Creditos" />
+      <Property name="Area" value="{{0.580,0},{0.900,0},{0.768,0},{0.969,0}}" />
+    </Window>
+  </Window>
+</GUILayout>

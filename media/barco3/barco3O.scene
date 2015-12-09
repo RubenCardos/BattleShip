@@ -1,0 +1,128 @@
+<scene previous_export_time="0" export_time="1449079220.084537" exported_by="lucia" formatVersion="1.0.1" >
+  <nodes >
+    <node name="Lamp.004" >
+      <position y="4.646214" x="1.504024" z="-6.226412" />
+      <rotation qz="-0.272171" qy="0.755880" qw="0.570947" qx="0.169076" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light powerScale="1.0" type="point" shadow="true" name="Lamp.004" >
+        <position y="4.646214" x="1.504024" z="-6.226412" />
+        <lightAttenuation quadratic="0.0" range="5000" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+        <colourShadow g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="Lamp.003" >
+      <position y="8.348407" x="-1.051684" z="1.192806" />
+      <rotation qz="-0.272171" qy="0.755880" qw="0.570947" qx="0.169076" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light powerScale="1.0" type="point" shadow="true" name="Lamp.003" >
+        <position y="8.348407" x="-1.051684" z="1.192806" />
+        <lightAttenuation quadratic="0.0" range="5000" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+        <colourShadow g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="Lamp.002" >
+      <position y="5.155816" x="5.876176" z="-0.707874" />
+      <rotation qz="-0.272171" qy="0.755880" qw="0.570947" qx="0.169076" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light powerScale="1.0" type="point" shadow="true" name="Lamp.002" >
+        <position y="5.155816" x="5.876176" z="-0.707874" />
+        <lightAttenuation quadratic="0.0" range="5000" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+        <colourShadow g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="Lamp.001" >
+      <position y="3.896904" x="2.183311" z="5.174265" />
+      <rotation qz="-0.272171" qy="0.755880" qw="0.570947" qx="0.169076" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light powerScale="1.0" type="point" shadow="true" name="Lamp.001" >
+        <position y="3.896904" x="2.183311" z="5.174265" />
+        <lightAttenuation quadratic="0.0" range="5000" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+        <colourShadow g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="barco" >
+      <position y="-1.570888" x="2.509152" z="0.639356" />
+      <rotation qz="-0.000000" qy="0.000000" qw="1.000000" qx="0.000000" />
+      <scale y="1.000000" x="1.000000" z="0.790377" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity lock_rot_z="False" velocity_min="0.0" friction_z="1.0" anisotropic_friction="False" friction_x="1.0" lock_trans_x="False" friction_y="1.0" ghost="False" lock_trans_y="False" mass_radius="1.0" inertia_tensor="0.4000000059604645" name="Cube" lock_rot_y="False" damping_trans="0.02539999969303608" damping_rot="0.1589999943971634" lock_trans_z="False" velocity_max="0.0" actor="False" physics_type="STATIC" mass="1.0" lock_rot_x="False" meshFile="Cube.mesh" />
+    </node>
+    <node name="Lamp" >
+      <position y="3.240627" x="11.868788" z="4.593127" />
+      <rotation qz="-0.272171" qy="0.755880" qw="0.570947" qx="0.169076" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light powerScale="1.0" type="point" shadow="true" name="Lamp" >
+        <position y="3.240627" x="11.868788" z="4.593127" />
+        <lightAttenuation quadratic="0.0" range="5000" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+        <colourShadow g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="Camera" >
+      <position y="5.343665" x="7.481132" z="6.507640" />
+      <rotation qz="-0.212922" qy="0.334251" qw="0.781600" qx="0.481707" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera fov="1.4736212743707156" projectionType="perspective" name="Camera" >
+        <clipping farPlaneDist="100.0" far="100.0" near="0.10000000149011612" nearPlaneDist="0.10000000149011612" />
+      </camera>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco3LuciaOgre/barco.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco3LuciaOgre/blanco.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco3LuciaOgre/suelo.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco3LuciaOgre/agua.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/lucia/Escritorio/barco3LuciaOgre/marron.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourAmbient g="0.0" r="0.0" b="0.0" />
+    <colourBackground g="0.4401892423629761" r="0.4124631881713867" b="0.6266627311706543" />
+    <colourDiffuse g="0.4401892423629761" r="0.4124631881713867" b="0.6266627311706543" />
+  </environment>
+</scene>

@@ -1,0 +1,25 @@
+// mastiles genrated by blender2ogre 0.6.0
+
+material mastiles 
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass mastiles
+        {
+            ambient 0.46720096468925476 0.27915146946907043 0.15677165985107422 1.0
+            diffuse 0.46720096468925476 0.27915146946907043 0.15677165985107422 1.0
+            specular 0.3726463317871094 0.3726463317871094 0.3726463317871094 1.0 12.5
+
+
+            texture_unit 
+            {
+                texture 2010-09-03_14-45-58.jpg
+                tex_address_mode wrap
+                scale 1.0 1.0
+                colour_op modulate
+            }
+        }
+    }
+}
