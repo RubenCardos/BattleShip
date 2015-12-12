@@ -5,9 +5,7 @@
 using namespace std;
 
 Barco::Barco(const int size){
-
   _size=size;
-
 }
 
 Barco::~Barco(){

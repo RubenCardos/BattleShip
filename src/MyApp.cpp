@@ -185,8 +185,6 @@ void MyApp::createScene() {
     }
   }
 
-
-
   //Agregamos la decoration de la escena
   MyApp::createDecorationLeft();
   MyApp::createDecorationRight();
