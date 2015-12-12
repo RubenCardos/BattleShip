@@ -1,0 +1,26 @@
+// marron genrated by blender2ogre 0.6.0
+
+material marronWood
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass marronWood
+        {
+            ambient 1.0 0.9067515730857849 0.934836208820343 1.0
+            diffuse 0.2398512363433838 0.21748548586093364 0.22422162046412097 1.0
+            specular 0.4652694761753082 0.4652694761753082 0.4652694761753082 1.0 12.5
+           
+
+
+            texture_unit 
+            {
+                texture 2010-09-03_14-45-58.jpg
+                tex_address_mode wrap
+                scale 1.0 1.0
+                colour_op modulate
+            }
+        }
+    }
+}

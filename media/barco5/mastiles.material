@@ -1,0 +1,42 @@
+// mastiles genrated by blender2ogre 0.6.0
+
+material mastiles 
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass mastiles
+        {
+            ambient 0.46720096468925476 0.27915146946907043 0.15677165985107422 1.0
+            diffuse 0.14672427680671163 0.0876674077602182 0.049234077311325564 1.0
+            specular 0.3726463317871094 0.3726463317871094 0.3726463317871094 1.0 12.5
+            emissive 0.1027842116746891 0.06141332295042101 0.034489764980349946 1.0
+
+            alpha_to_coverage off
+            colour_write on
+            cull_hardware clockwise
+            depth_check on
+            depth_func less_equal
+            depth_write on
+            illumination_stage 
+            light_clip_planes off
+            light_scissor off
+            lighting on
+            normalise_normals off
+            polygon_mode solid
+            scene_blend one zero
+            scene_blend_op add
+            shading gouraud
+            transparent_sorting on
+
+            texture_unit 
+            {
+                texture 2010-09-03_14-45-58.jpg
+                tex_address_mode wrap
+                scale 1.0 1.0
+                colour_op modulate
+            }
+        }
+    }
+}

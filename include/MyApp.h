@@ -3,6 +3,8 @@
 #include <CEGUI.h>
 #include <RendererModules/Ogre/Renderer.h>
 #include <string>
+#include "TrackManager.h"
+#include "SoundFXManager.h"
 
 class MyApp {
   
@@ -11,6 +13,13 @@ private:
   Ogre::Root* _root;
   CEGUI::OgreRenderer* renderer; 
   MyFrameListener* _framelistener;
+
+  // Manejadores del sonido.
+  TrackManager* _pTrackManager;
+  SoundFXManager* _pSoundFXManager;
+  TrackPtr _mainTrack;
+  SoundFXPtr _simpleEffect;
+  bool _initSDL();
   
 public:
   MyApp();

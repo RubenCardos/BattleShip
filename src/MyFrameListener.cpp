@@ -17,8 +17,8 @@
 #include "EntityMaterialInstance.h"
 
 using namespace std;
-//Estados
 
+//Estados
 enum States {
   start,
   posicionando1,
@@ -33,38 +33,42 @@ enum States {
 };
 
 States state;
-bool changeState;
-bool showInfo=true;//Mostrar info
-bool canRotate=true;//El barco puede Rotar(para la colocacion)
+bool g_changeState;
+
+bool g_canRotate=true;//El barco puede Rotar(para la colocacion)
 
 //Mostrar creditos
-bool showCreditsFrame=true;
+bool g_showCreditsFrame=true;
 
 //Para posicionar los barcos
 //Una variable para detectar cada boton
-bool UPkeyDown=true;//Para pulsacion
-bool DOWNkeyDown=true;//Para pulsacion
-bool LEFTkeyDown=true;//Para pulsacion
-bool RIGHTkeyDown=true;//Para pulsacion
-bool ENTERkeyDown=true;//Para pulsacion
-bool shipLocated=false;//Para ver si ya hemos colocado el barco
-int rotation=1;//rotaciones de los barcos
+bool g_UPkeyDown=true;//Para pulsacion
+bool g_DOWNkeyDown=true;//Para pulsacion
+bool g_LEFTkeyDown=true;//Para pulsacion
+bool g_RIGHTkeyDown=true;//Para pulsacion
+bool g_ENTERkeyDown=true;//Para pulsacion
+bool g_shipLocated=false;//Para ver si ya hemos colocado el barco
+int g_rotation=1;//rotaciones de los barcos
 
 //Para detectar click
-bool mouseClick=true;
+bool g_mouseClick=true;
 
 //Para la posicion de cada barco en cada momento
 int i;
 int j;
 
 //Tablero Enemigo
-Tablero boardEnemy;
+Tablero g_boardEnemy;
 
 //Tablero Jugador
-Tablero boardPlayer;
+Tablero g_boardPlayer;
 
 //Para transparencia
 EntityMaterialInstance *emi;
+
+//Puntuacion
+
+int g_puntuacion=100;
 
 MyFrameListener::MyFrameListener(Ogre::RenderWindow* win,Ogre::Camera* cam, SceneManager* sm) {
 
@@ -89,14 +93,14 @@ MyFrameListener::MyFrameListener(Ogre::RenderWindow* win,Ogre::Camera* cam, Scen
 
   //Estado
   state = start;
-  changeState = true;
+  g_changeState = true;
 
   //RayQuery--Ver objeto que se pulsa
   _raySceneQuery = _sceneManager->createRayQuery(Ray());
   _selectedNode = NULL;
 
   //Tableros
-  boardEnemy.generateRandomBoard();//al generarse ya se pinta
+  g_boardEnemy.generateRandomBoard();//al generarse ya se pinta
 
 }
 
@@ -108,7 +112,7 @@ MyFrameListener::~MyFrameListener() {
 
 bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
 
-  _timeSinceLastFrame = evt.timeSinceLastFrame;
+  _timeSinceLastFrame = evt.timeSinceLastFrame;//deltaT
  
   CEGUI::System::getSingleton().getDefaultGUIContext().injectTimePulse(_timeSinceLastFrame);
 
@@ -121,65 +125,40 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
   int posx = CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().getPosition().d_x;   // Posicion del puntero
   int posy = CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().getPosition().d_y;   //  en pixeles.
   uint32 mask;
+
   // Botones del raton pulsados? -------------------------------------
   mbleft = _mouse->getMouseState().buttonDown(OIS::MB_Left);
   mbmiddle = _mouse->getMouseState().buttonDown(OIS::MB_Middle);
   mbright = _mouse->getMouseState().buttonDown(OIS::MB_Right);
 
-  //INFORMACION (pulsado la i)
-
-  if(_keyboard->isKeyDown(OIS::KC_I) && showInfo==true){
-    showInfo=false;
-    cout << "----------INFO---------- \n" <<  endl;
-    cout << "Estado: " << state << endl;
-    cout << "------SCENE MANAGER----- \n" <<  endl;
-    cout <<"Root "<<_sceneManager->getRootSceneNode()->getName() << endl;
-    Ogre::SceneNode::ChildNodeIterator it = _sceneManager->getRootSceneNode()->getChildIterator();
-    while ( it.hasMoreElements() ) {//Hijos del Root
-      SceneNode* child = static_cast<SceneNode*>(it.getNext());
-      cout <<"Nodo: "<<child->getName() << endl;
-      Ogre::SceneNode::ChildNodeIterator it2 = child->getChildIterator();
-      while ( it2.hasMoreElements() ) {//Hijos de cada hijo (solo tenemos dos niveles)
-        SceneNode* child2 = static_cast<SceneNode*>(it2.getNext());
-        cout <<"---Nodo: "<<child2->getName() << endl;
-    }
-   }
-
-    cout << "------------------------ \n" <<  endl;
-  }
-
-  if(_keyboard->isKeyDown(OIS::KC_I) == false){
-    showInfo=true;
-  }
-
   switch(state) {
-    
+
+    case gameOver://Actualizo los records
+      
+      break;
 
     case posicionando1://Un estado por cada barco, Barco1
-      
-      
 
       break;
 
     case posicionando2:
 
-      
       //Si no he colocado el barco
-      if(shipLocated==false){
+      if(g_shipLocated==false){
         //Si no esta colocado lo puedo mover
         MoverBarco("Barco",_keyboard,_sceneManager,88,88,88,88,22);//Este va bien
         //Si pulso enter coloco el barco
-        if(_keyboard->isKeyDown(OIS::KC_RETURN) && ENTERkeyDown==true){
-          ENTERkeyDown=false;
-          if(boardPlayer.checkPosition(i,j)){
+        if(_keyboard->isKeyDown(OIS::KC_RETURN) && g_ENTERkeyDown==true){
+          g_ENTERkeyDown=false;
+          if(g_boardPlayer.checkPosition(i,j)){
             cout << "Posicion correcta" << endl;
-            shipLocated=true;
-            boardPlayer.setBox(i,j,1);
-            boardPlayer.printBoard();
+            g_shipLocated=true;
+            g_boardPlayer.setBox(i,j,1);
+            g_boardPlayer.printBoard();
           }
         }
         if(_keyboard->isKeyDown(OIS::KC_RETURN) == false){
-          ENTERkeyDown=true;
+          g_ENTERkeyDown=true;
         }  
       }else{
         //Cambio el texto de la interfaz
@@ -191,40 +170,37 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
       break;
 
     case posicionando3:
-      // Puede que izquierda y derecha esten invertidas
-      //int limSup,int limInf,int limDer,int limIzq,int desp
-      //MoverBarco("Barco2",_keyboard,_sceneManager,88,88,88,88,22);
-    //Si no he colocado el barco
-      if(shipLocated==false){
+      //Si no he colocado el barco
+      if(g_shipLocated==false){
         //Si no esta colocado lo puedo mover
         MoverBarco("Barco2",_keyboard,_sceneManager,88,88,88,88,22);//Este va bien
         //Si pulso enter coloco el barco
-        if(_keyboard->isKeyDown(OIS::KC_RETURN) && ENTERkeyDown==true){
-          ENTERkeyDown=false;
-          if(rotation==1 || rotation==3){//horizontal
-            if(boardPlayer.checkPosition(i,j)&&boardPlayer.checkPosition(i,j+1) && boardPlayer.checkPosition(i,j-1)){//compruebo ij, j+1,j-1,
+        if(_keyboard->isKeyDown(OIS::KC_RETURN) && g_ENTERkeyDown==true){
+          g_ENTERkeyDown=false;
+          if(g_rotation==1 || g_rotation==3){//horizontal
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i,j+1) && g_boardPlayer.checkPosition(i,j-1)){//compruebo ij, j+1,j-1,
               cout << "Posicion correcta" << endl;
-              shipLocated=true;
+              g_shipLocated=true;
               //pongo todas las posiciones
-              boardPlayer.setBox(i,j,2);
-              boardPlayer.setBox(i,j+1,2);
-              boardPlayer.setBox(i,j-1,2);
-              boardPlayer.printBoard();
+              g_boardPlayer.setBox(i,j,2);
+              g_boardPlayer.setBox(i,j+1,2);
+              g_boardPlayer.setBox(i,j-1,2);
+              g_boardPlayer.printBoard();
             }else{
               //Cambio el texto de la interfaz
               CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
               CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
               AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
             }
-          }if(rotation==2 || rotation==4){//vertical
-            if(boardPlayer.checkPosition(i,j)&&boardPlayer.checkPosition(i+1,j) && boardPlayer.checkPosition(i-1,j)){//compruebo ij, i+1,i-1,
+          }if(g_rotation==2 || g_rotation==4){//vertical
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i+1,j) && g_boardPlayer.checkPosition(i-1,j)){//compruebo ij, i+1,i-1,
               cout << "Posicion correcta" << endl;
-              shipLocated=true;
+              g_shipLocated=true;
               //pongo todas las posiciones
-              boardPlayer.setBox(i,j,2);
-              boardPlayer.setBox(i-1,j,2);
-              boardPlayer.setBox(i+1,j,2);
-              boardPlayer.printBoard();
+              g_boardPlayer.setBox(i,j,2);
+              g_boardPlayer.setBox(i-1,j,2);
+              g_boardPlayer.setBox(i+1,j,2);
+              g_boardPlayer.printBoard();
             }else{
               //Cambio el texto de la interfaz
               CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
@@ -234,7 +210,7 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
           }
         }
         if(_keyboard->isKeyDown(OIS::KC_RETURN) == false){
-          ENTERkeyDown=true;
+          g_ENTERkeyDown=true;
         }  
       }else{
         //Cambio el texto de la interfaz
@@ -246,39 +222,37 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
       break;
 
     case posicionando4:
-
-      //MoverBarco("Barco3",_keyboard,_sceneManager,88,88,66,66,22);//Desplazamiento raro
       //Si no he colocado el barco
-      if(shipLocated==false){
+      if(g_shipLocated==false){
         //Si no esta colocado lo puedo mover
         MoverBarco("Barco3",_keyboard,_sceneManager,88,88,88,88,22);//Este va bien
         //Si pulso enter coloco el barco
-        if(_keyboard->isKeyDown(OIS::KC_RETURN) && ENTERkeyDown==true){
-          ENTERkeyDown=false;
-          if(rotation==1 || rotation==3){//horizontal
-            if(boardPlayer.checkPosition(i,j)&&boardPlayer.checkPosition(i,j+1) && boardPlayer.checkPosition(i,j-1)){//compruebo ij, j+1,j-1,
+        if(_keyboard->isKeyDown(OIS::KC_RETURN) && g_ENTERkeyDown==true){
+          g_ENTERkeyDown=false;
+          if(g_rotation==1 || g_rotation==3){//horizontal
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i,j+1) && g_boardPlayer.checkPosition(i,j-1)){//compruebo ij, j+1,j-1,
               cout << "Posicion correcta" << endl;
-              shipLocated=true;
+              g_shipLocated=true;
               //pongo todas las posiciones
-              boardPlayer.setBox(i,j,3);
-              boardPlayer.setBox(i,j+1,3);
-              boardPlayer.setBox(i,j-1,3);
-              boardPlayer.printBoard();
+              g_boardPlayer.setBox(i,j,3);
+              g_boardPlayer.setBox(i,j+1,3);
+              g_boardPlayer.setBox(i,j-1,3);
+              g_boardPlayer.printBoard();
             }else{
               //Cambio el texto de la interfaz
               CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
               CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
               AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
             }
-          }if(rotation==2 || rotation==4){//vertical
-            if(boardPlayer.checkPosition(i,j)&&boardPlayer.checkPosition(i+1,j) && boardPlayer.checkPosition(i-1,j)){//compruebo ij, i+1,i-1,
+          }if(g_rotation==2 || g_rotation==4){//vertical
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i+1,j) && g_boardPlayer.checkPosition(i-1,j)){//compruebo ij, i+1,i-1,
               cout << "Posicion correcta" << endl;
-              shipLocated=true;
+              g_shipLocated=true;
               //pongo todas las posiciones
-              boardPlayer.setBox(i,j,3);
-              boardPlayer.setBox(i-1,j,3);
-              boardPlayer.setBox(i+1,j,3);
-              boardPlayer.printBoard();
+              g_boardPlayer.setBox(i,j,3);
+              g_boardPlayer.setBox(i-1,j,3);
+              g_boardPlayer.setBox(i+1,j,3);
+              g_boardPlayer.printBoard();
             }else{
               //Cambio el texto de la interfaz
               CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
@@ -288,7 +262,7 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
           }
         }
         if(_keyboard->isKeyDown(OIS::KC_RETURN) == false){
-          ENTERkeyDown=true;
+          g_ENTERkeyDown=true;
         }  
       }else{
         //Cambio el texto de la interfaz
@@ -299,24 +273,76 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
       break;
 
     case posicionando5:
-
-      //MoverBarco("Barco4",_keyboard,_sceneManager,88,88,88,44,22);//Desplazamiento raro
       //Si no he colocado el barco
-      if(shipLocated==false){
+      if(g_shipLocated==false){
         //Si no esta colocado lo puedo mover
         MoverBarco("Barco4",_keyboard,_sceneManager,88,88,88,88,22);//Este va bien
         //Si pulso enter coloco el barco
-        if(_keyboard->isKeyDown(OIS::KC_RETURN) && ENTERkeyDown==true){
-          ENTERkeyDown=false;
-          if(boardEnemy.checkPosition(i,j)){
-            cout << "Posicion correcta" << endl;
-            shipLocated=true;
-            boardPlayer.setBox(i,j,4);
-            boardPlayer.printBoard();
+        if(_keyboard->isKeyDown(OIS::KC_RETURN) && g_ENTERkeyDown==true){
+          g_ENTERkeyDown=false;
+          if(g_rotation==1){//horizontal
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i,j+1) ){//compruebo ij, j+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,4);
+              g_boardPlayer.setBox(i,j+1,4);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+          if(g_rotation==3){//horizontal
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i,j-1) ){//compruebo ij, j+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,4);
+              g_boardPlayer.setBox(i,j-1,4);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+          if(g_rotation==2){//vertical
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i+1,j)){//compruebo ij, i+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,4);
+              g_boardPlayer.setBox(i+1,j,4);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+          if(g_rotation==4){//vertical
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i-1,j)){//compruebo ij, i+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,4);
+              g_boardPlayer.setBox(i-1,j,4);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
           }
         }
         if(_keyboard->isKeyDown(OIS::KC_RETURN) == false){
-          ENTERkeyDown=true;
+          g_ENTERkeyDown=true;
         }  
       }else{
         //Cambio el texto de la interfaz
@@ -327,16 +353,92 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
       break;
 
     case posicionando6:
+      //Si no he colocado el barco
+      if(g_shipLocated==false){
+        //Si no esta colocado lo puedo mover
+        MoverBarco("Barco5",_keyboard,_sceneManager,88,88,88,88,22);//Este va bien
+        //Si pulso enter coloco el barco
+        if(_keyboard->isKeyDown(OIS::KC_RETURN) && g_ENTERkeyDown==true){
+          g_ENTERkeyDown=false;
+          if(g_rotation==1){//horizontal
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i,j+1) ){//compruebo ij, j+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,5);
+              g_boardPlayer.setBox(i,j+1,5);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+          if(g_rotation==3){//horizontal
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i,j-1) ){//compruebo ij, j+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,5);
+              g_boardPlayer.setBox(i,j-1,5);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+          if(g_rotation==2){//vertical
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i+1,j)){//compruebo ij, i+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,5);
+              g_boardPlayer.setBox(i+1,j,5);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+          if(g_rotation==4){//vertical
+            if(g_boardPlayer.checkPosition(i,j)&&g_boardPlayer.checkPosition(i-1,j)){//compruebo ij, i+1
+              cout << "Posicion correcta" << endl;
+              g_shipLocated=true;
+              //pongo todas las posiciones
+              g_boardPlayer.setBox(i,j,5);
+              g_boardPlayer.setBox(i-1,j,5);
+              g_boardPlayer.printBoard();
+            }else{
+              //Cambio el texto de la interfaz
+              CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+              CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+              AuxconfigWin2->getChild("Text1")->setText("Posicion incorrecta");
+            }
+          }
+        }
+        if(_keyboard->isKeyDown(OIS::KC_RETURN) == false){
+          g_ENTERkeyDown=true;
+        }  
+      }else{
+        //Cambio el texto de la interfaz
+        CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+        CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+        AuxconfigWin2->getChild("Text1")->setText("Barco colocado, pulsa siguiente");
+      }
 
       break;      
 
     case jugando:
-          
-      //cout << "Player: Algun barco vivo? " << boardPlayer.anyShipAlive() << endl;
-
-      if (mbleft && mouseClick == true) {//Si pulso el boton izquierdo vemos donde pincho
+      if (mbleft && g_mouseClick == true) {//Si pulso el boton izquierdo vemos donde pincho
         
-        mouseClick=false;
+        g_puntuacion-=1;
+
+        g_mouseClick=false;
 
         if (_selectedNode != NULL) {  // Si habia alguno seleccionado...
           _selectedNode->showBoundingBox(false);  _selectedNode = NULL;  
@@ -349,7 +451,6 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
         RaySceneQueryResult::iterator it; //iterator para ver resultados
         it = result.begin();
         cout << "----------INFO---------- \n" <<  endl;
-        cout << "Estado: " << state << endl;
         cout << "--RaySceneQueryResult--- \n" <<  endl;
         if (it != result.end()) {//si no hay nada no hago nada
           for (it = result.begin(); it != result.end(); it++){
@@ -365,31 +466,32 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
                 string coor = Ogre::StringUtil::split(aux->getName(), "NodeCube")[0];
                 int x=Ogre::StringConverter::parseInt(coor.substr(0,1));
                 int y=Ogre::StringConverter::parseInt(coor.substr(1,2));
-                cout << "Tablero["<< x <<"]["<< y <<"]="<< boardEnemy.checkBox(x,y)<<endl;
-                if(boardEnemy.checkBox(x,y)!=9){
-                  if(boardEnemy.checkBox(x,y)!=0){
+                cout << "Tablero["<< x <<"]["<< y <<"]="<< g_boardEnemy.checkBox(x,y)<<endl;
+                if(g_boardEnemy.checkBox(x,y)!=9){
+                  if(g_boardEnemy.checkBox(x,y)!=0){
                     auxEnt->setMaterialName("cross");
-                    boardEnemy.setBox(x,y,9);
+                    g_boardEnemy.setBox(x,y,9);
                     //Cambio el texto de la interfaz
                     CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
                     CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-                    AuxconfigWin2->getChild("Text1")->setText("Impacto!");
-                    //boardEnemy.hitShip(boardEnemy.checkBox(x,y)-1);  
+                    AuxconfigWin2->getChild("Text1")->setText("Player: Impacto, dispara de nuevo!");
+
                   }else{
                     auxEnt->setMaterialName("fail");
-                    boardEnemy.setBox(x,y,9);
+                    g_boardEnemy.setBox(x,y,9);
                     //Cambio el texto de la interfaz
                     CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
                     CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-                    AuxconfigWin2->getChild("Text1")->setText("Agua!");
+                    AuxconfigWin2->getChild("Text1")->setText("Player: Agua!");
+                    //Paso al turno del enemigo
+                    state=jugandoEnemy;
                   }
-                  //Paso al turno del enemigo
-                  state=jugandoEnemy;
+                  
                 }else{
                   //Cambio el texto de la interfaz
                   CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
                   CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-                  AuxconfigWin2->getChild("Text1")->setText("Casilla ya pulsada, pulsa otra");
+                  AuxconfigWin2->getChild("Text1")->setText("Player: Casilla ya pulsada, pulsa otra");
                 } 
               }
             }
@@ -398,79 +500,85 @@ bool MyFrameListener::frameStarted(const Ogre::FrameEvent& evt) {
         cout << "------------------------ \n" <<  endl;
       }
       if (mbleft ==false) {
-        mouseClick=true;
+        g_mouseClick=true;
+      }
+
+      if(g_boardEnemy.anyShipAlive()==false){
+        CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+        sheet->getChild("gameoverFrame")->setProperty("Image","BackgroundImagePlayer");
+        resetGame();
       }
         
       break;
 
     case jugandoEnemy:
-      cout << "Enemigo: Algun barco vivo? " << boardEnemy.anyShipAlive() << endl;
-      if(boardEnemy.anyShipAlive()==true){
+      cout << "Enemigo: Algun barco vivo? " << g_boardEnemy.anyShipAlive() << endl;
+      if(g_boardEnemy.anyShipAlive()==true){
         cout << "Si!" << endl;
       }else{//pierde el enemigo (RECORDS?)
         cout << "Flota Destruida" << endl;
-        //Aqui pantalla game over (Gana el jugador)
+        
       }
+      
       srand((unsigned)time(0));
       int x=rand()%9; //genero de 0 a 9 para no salirse de los limites
       int y=rand()%9;
      
       Ogre::SceneNode::ChildNodeIterator it = _sceneManager->getRootSceneNode()->getChild("Tablero")->getChildIterator();
-    	while ( it.hasMoreElements() ) {
-	      SceneNode* child = static_cast<SceneNode*>(it.getNext());
-	      //cout <<"Tablero jugador Nodo: "<<child->getName() << endl;
-	      if(Ogre::StringUtil::endsWith(child->getName(),"NodeCubeJugador",true)){
-	      	Entity* auxEnt = static_cast<Entity*>(child->getAttachedObject(0));
-		      string coor = Ogre::StringUtil::split(child->getName(), "NodeCubeJugador")[0];
-	        int i=Ogre::StringConverter::parseInt(coor.substr(0,1));
-	        int j=Ogre::StringConverter::parseInt(coor.substr(1,2));
-	        if(x==j && y==i){//que sea la casilla que a la que se e ha disparado
-	      			if(boardPlayer.checkBox(x,y)!=9){ 	
-		            if(boardPlayer.checkBox(x,y)!=0){
-		              auxEnt->setMaterialName("cross");  
-		            }else{
-		              auxEnt->setMaterialName("fail");
-		            }
-          	}
-        	}
-
-      	}
-	      
-	    }
-      if(boardPlayer.checkBox(x,y)==9){//Casilla ya pulsada
+      while ( it.hasMoreElements() ) {
+        SceneNode* child = static_cast<SceneNode*>(it.getNext());
+        //cout <<"Tablero jugador Nodo: "<<child->getName() << endl;
+        if(Ogre::StringUtil::endsWith(child->getName(),"NodeCubeJugador",true)){
+          Entity* auxEnt = static_cast<Entity*>(child->getAttachedObject(0));
+          string coor = Ogre::StringUtil::split(child->getName(), "NodeCubeJugador")[0];
+          int i=Ogre::StringConverter::parseInt(coor.substr(0,1));
+          int j=Ogre::StringConverter::parseInt(coor.substr(1,2));
+          if(x==j && y==i){//que sea la casilla que a la que se e ha disparado
+            if(g_boardPlayer.checkBox(x,y)!=9){   
+              if(g_boardPlayer.checkBox(x,y)!=0){
+                auxEnt->setMaterialName("cross");  
+              }else{
+                auxEnt->setMaterialName("fail");
+              }
+            }
+          }
+        }
+      }
+      if(g_boardPlayer.checkBox(x,y)==9){//Casilla ya pulsada
         cout << "Enemigo: Casilla ya disparada " <<endl;
       }else{//puedo disparar hay
-        if(boardPlayer.checkBox(x,y)!=0){//impacto
+        if(g_boardPlayer.checkBox(x,y)!=0){//impacto
           //Cambio el texto de la interfaz
           CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
           CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-          AuxconfigWin2->getChild("Text1")->setText("Enemigo Impacto!");
-          boardPlayer.setBox(x,y,9);
+          AuxconfigWin2->getChild("Text1")->setText("Enemigo: Impacto,Dispara de nuevo!");
+          g_boardPlayer.setBox(x,y,9);
         }else{//Agua
           //Cambio el texto de la interfaz
           CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
           CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-          AuxconfigWin2->getChild("Text1")->setText("Enemigo Agua!");
-          boardPlayer.setBox(x,y,9);
+          AuxconfigWin2->getChild("Text1")->setText("Enemigo: Agua!");
+          g_boardPlayer.setBox(x,y,9);
+          //Paso al turno del jugador
+          state=jugando;
         }
-        //Paso al turno del jugador
-        state=jugando;
-        boardPlayer.printBoard();
+        
+        g_boardEnemy.printBoard();
       }
 
       break;
     
   }
 
-  if(_quit) return false;
+  if(_quit){ 
+    return false;
+  }
 
   return true;
 }
 
 bool MyFrameListener::keyPressed(const OIS::KeyEvent& evt)
 {
-  
-
   if(evt.key==OIS::KC_ESCAPE) return _quit=true;
  
   CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyDown(static_cast<CEGUI::Key::Scan>(evt.key));
@@ -538,7 +646,7 @@ Ray MyFrameListener::setRayQuery(int posx, int posy, uint32 mask) {
 bool MyFrameListener::nextShip(const CEGUI::EventArgs &e)
 {
 
-	SceneNode* planePlayer =static_cast<SceneNode*>(_sceneManager->getRootSceneNode()->getChild("Tablero"));
+  SceneNode* planePlayer =static_cast<SceneNode*>(_sceneManager->getRootSceneNode()->getChild("Tablero"));
 
   //Cambio de estado
   switch(state) {
@@ -572,18 +680,18 @@ bool MyFrameListener::nextShip(const CEGUI::EventArgs &e)
       j=4;
 
       //Rotacion inicial
-      rotation=1;
+      g_rotation=1;
       
       //Cambio el texto de la interfaz
       CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
       CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-      AuxconfigWin2->getChild("Text1")->setText("Colocando 1º Barco. \n Pulsa ENTER para colocar");
+      AuxconfigWin2->getChild("Text1")->setText("Colocando 1 Barco. \n Pulsa ENTER para colocar");
 
       break;}
 
     case posicionando2:{//Un estado por cada barco, Barco2
 
-      if(shipLocated==true){
+      if(g_shipLocated==true){
         cout << "\nEstoy en posicionando2\n" <<endl;
         Entity* entBarco2 = _sceneManager->createEntity("barco2.mesh");
         SceneNode* nodeBarco2 = _sceneManager->createSceneNode("Barco2");
@@ -597,25 +705,25 @@ bool MyFrameListener::nextShip(const CEGUI::EventArgs &e)
         state=posicionando3;
 
         //Siguiente barco aparece en el 4,4 
-        //Consideramos la posicion como la popa (El de atras) (PUNTO DE APLICACION)
+        //Consideramos el centro como PUNTO DE APLICACION
         i=4;
         j=4;
 
         //Rotacion inicial
-        rotation=1;
+        g_rotation=1;
 
         //Cambio el texto de la interfaz
-      	CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-      	CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-      	AuxconfigWin2->getChild("Text1")->setText("Colocando 2º Barco. \n Pulsa ENTER para colocar");
+        CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+        CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+        AuxconfigWin2->getChild("Text1")->setText("Colocando 2 Barco. \n Pulsa ENTER para colocar");
 
-        shipLocated=false;
+        g_shipLocated=false;
       }
       break;}
 
     case posicionando3:{//Un estado por cada barco, Barco1
 
-      if(shipLocated==true){
+      if(g_shipLocated==true){
         cout << "\nEstoy en posicionando3\n" <<endl;
         Entity* entBarco3 = _sceneManager->createEntity("barco3.mesh");
         SceneNode* nodeBarco3 = _sceneManager->createSceneNode("Barco3");
@@ -626,73 +734,97 @@ bool MyFrameListener::nextShip(const CEGUI::EventArgs &e)
         emi=new EntityMaterialInstance(entBarco3);//Para alpha
         planePlayer->addChild(nodeBarco3);
 
-        //Siguiente barco aparece en el 5,4 
-        //Consideramos la posicion como la popa (El de atras) (PUNTO DE APLICACION)
+        //Siguiente barco aparece en el 4,4 
+        //Consideramos el centro como PUNTO DE APLICACION
         i=4;
         j=4;
 
         //Rotacion inicial
-        rotation=1;
+        g_rotation=1;
 
         //Cambio el texto de la interfaz
         CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
         CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-        AuxconfigWin2->getChild("Text1")->setText("Colocando 3º Barco. \n Pulsa ENTER para colocar");
+        AuxconfigWin2->getChild("Text1")->setText("Colocando 3 Barco. \n Pulsa ENTER para colocar");
         
         state=posicionando4;
-        shipLocated=false;
+        g_shipLocated=false;
       }
       break;}
 
     case posicionando4:{//Un estado por cada barco, Barco1
 
-      if(shipLocated==true){
+      if(g_shipLocated==true){
 
-      cout << "\nEstoy en posicionando4\n" <<endl;
-      Entity* entBarco4 = _sceneManager->createEntity("barco4.mesh");
-      SceneNode* nodeBarco4 = _sceneManager->createSceneNode("Barco4");
-      nodeBarco4->attachObject(entBarco4);
-      nodeBarco4->setPosition(0,0,0); //x,y,z
-      nodeBarco4->setScale(8,8,8);
-      nodeBarco4->yaw(Ogre::Degree(-180));
-      emi=new EntityMaterialInstance(entBarco4);//Para alpha
-      planePlayer->addChild(nodeBarco4);
+        cout << "\nEstoy en posicionando4\n" <<endl;
+        Entity* entBarco4 = _sceneManager->createEntity("barco4.mesh");
+        SceneNode* nodeBarco4 = _sceneManager->createSceneNode("Barco4");
+        nodeBarco4->attachObject(entBarco4);
+        nodeBarco4->setPosition(0,0,0); //x,y,z
+        nodeBarco4->setScale(8,8,8);
+        nodeBarco4->yaw(Ogre::Degree(-90));
+        emi=new EntityMaterialInstance(entBarco4);//Para alpha
+        planePlayer->addChild(nodeBarco4);
 
-      //Siguiente barco aparece en el 5,4 
-      //Consideramos la posicion como la popa (El de atras) (PUNTO DE APLICACION)
-      i=4;
-      j=4;
+        //Siguiente barco aparece en el 4,4 
+        //Consideramos la parta de atras como punto de aplicacion
+        i=4;
+        j=4;
 
-      //Rotacion inicial
-      rotation=1;
+        //Rotacion inicial
+        g_rotation=1;
 
-      //Cambio el texto de la interfaz
-      CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-      CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-      AuxconfigWin2->getChild("Text1")->setText("Colocando 4º Barco. \n Pulsa ENTER para colocar");
+        //Cambio el texto de la interfaz
+        CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+        CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+        AuxconfigWin2->getChild("Text1")->setText("Colocando 4 Barco. \n Pulsa ENTER para colocar");
 
-    
-      state=posicionando5;
-      shipLocated=false;
+      
+        state=posicionando5;
+        g_shipLocated=false;
       }
       break;}
 
     case posicionando5:{//Un estado por cada barco, Barco1
 
-      if(shipLocated==true){
-    
-        cout << "\nPasamos a posicionando6\n" <<endl;
+      if(g_shipLocated==true){
+
+        cout << "\nEstoy en posicionando5\n" <<endl;
+        Entity* entBarco5 = _sceneManager->createEntity("barco5.mesh");
+        SceneNode* nodeBarco5 = _sceneManager->createSceneNode("Barco5");
+        nodeBarco5->attachObject(entBarco5);
+        nodeBarco5->setPosition(0,0,0); //x,y,z
+        nodeBarco5->setScale(8,8,8);
+        nodeBarco5->yaw(Ogre::Degree(-90));
+        emi=new EntityMaterialInstance(entBarco5);//Para alpha
+        planePlayer->addChild(nodeBarco5);
+
+        //Siguiente barco aparece en el 4,4 
+        //Consideramos la parta de atras como punto de aplicacion
+        i=4;
+        j=4;
+
+        //Rotacion inicial
+        g_rotation=1;
+
+        //Cambio el texto de la interfaz
+        CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+        CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+        AuxconfigWin2->getChild("Text1")->setText("Colocando 5 Barco. \n Pulsa ENTER para colocar");
+
+      
         state=posicionando6;
-        shipLocated=false;
-      }
+        g_shipLocated=false;
+        }
       break;}
 
     case posicionando6:{
 
+
       //Cambio el texto de la interfaz
       CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
       CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-      AuxconfigWin2->getChild("Text1")->setText("Juguemos");
+      AuxconfigWin2->getChild("Text1")->setText("Juguemos!");
 
       state=jugando;
 
@@ -713,69 +845,77 @@ bool MyFrameListener::quit(const CEGUI::EventArgs &e)
 
 bool MyFrameListener::showRecords(const CEGUI::EventArgs &e)
 {
-	resetGame();
+
+  CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+  sheet->getChild("recordsFrame")->setVisible(_records);
+  sheet->getChild("recordsFrame")->getChild("puntuaciones")->getChild("textRecords")->setText(readRecords());
+
   if(_records==true){
     _records=false;
   }
   else{
     _records=true;
   }
-    cout << "\nRecords\n" << _records <<endl;
+  cout << "\nRecords\n" << _records <<endl;
   return true;
 }
 
 bool MyFrameListener::showControls(const CEGUI::EventArgs &e)
 {
-
-	cout << "\nControls\n" <<endl;
-
+  cout << "\nControls\n" <<endl;
   //Selecciono la principal
   CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-  sheet->getChild("controlsFrame")->setVisible(showCreditsFrame);
-  if(showCreditsFrame==true){
-    showCreditsFrame=false;
+  sheet->getChild("controlsFrame")->setVisible(g_showCreditsFrame);
+  if(g_showCreditsFrame==true){
+    g_showCreditsFrame=false;
   }else{
-    showCreditsFrame=true;
+    g_showCreditsFrame=true;
   }
-
-
-
-	return true;
+  return true;
 }
 bool MyFrameListener::showCredits(const CEGUI::EventArgs &e)
-{
-  
+{ 
   cout << "\nCreditos\n" <<endl;
-
   //Selecciono la principal
   CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-  sheet->getChild("creditFrame")->setVisible(showCreditsFrame);
-  if(showCreditsFrame==true){
-    showCreditsFrame=false;
+  sheet->getChild("creditFrame")->setVisible(g_showCreditsFrame);
+  if(g_showCreditsFrame==true){
+    g_showCreditsFrame=false;
   }else{
-    showCreditsFrame=true;
+    g_showCreditsFrame=true;
   }
   return true;
 }
 
 bool MyFrameListener::restart(const CEGUI::EventArgs &e)
 {
-  
   cout << "Restart " << endl;
-  
-	  CEGUI::Window* sheet2=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-	  sheet2->getChild("gameoverFrame")->setVisible(false);
+  state=posicionando1;
+  g_shipLocated=false,
+  //Falta reiniciar las matrices de los tableros
+  g_boardPlayer.cleanBoard();
+  cout << "Tablero Jugador reset"<<endl;
+  g_boardPlayer.printBoard();
 
-	  CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-	  sheet->getChild("Cfg")->getChild("exitButton")->setVisible(true);
-	  sheet->getChild("Cfg")->getChild("recordsButton")->setVisible(true);
-	  sheet->getChild("Cfg")->getChild("Text1")->setVisible(true);
-	  sheet->getChild("Cfg")->getChild("nextShipButton")->setVisible(true);
-	  sheet->getChild("Cfg")->getChild("controlsButton")->setVisible(true);
+  g_boardEnemy.cleanBoard();
+  cout << "Tablero Enemy reset"<<endl;
+  g_boardEnemy.printBoard();
 
-	  //Resetear matriz de barcos
-	  boardEnemy.generateRandomBoard();
+  //Cambio el texto de la interfaz
+  CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+  CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
+  AuxconfigWin2->getChild("Text1")->setText("Juguemos de nuevo!\nPulsa Siguiente");
 
+  CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+  sheet->getChild("gameoverFrame")->setVisible(false);
+  sheet->getChild("Cfg")->getChild("exitButton")->setVisible(true);
+  sheet->getChild("Cfg")->getChild("recordsButton")->setVisible(true);
+  sheet->getChild("Cfg")->getChild("Text1")->setVisible(true);
+  sheet->getChild("Cfg")->getChild("nextShipButton")->setVisible(true);
+  sheet->getChild("Cfg")->getChild("controlsButton")->setVisible(true);
+
+  //Resetear matriz de barcos
+  g_boardEnemy.generateRandomBoard();
 
   return true;
 }
@@ -786,9 +926,7 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   cout << "\nJugemos\n" <<endl;
   state = posicionando1;
 
-
-  CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-  
+  CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();  
   sheet->setVisible(false);
 
   //Nueva Pantalla
@@ -826,7 +964,6 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   controlsButton->setYPosition(CEGUI::UDim(0.90f, 0.0f));
 
   //CONTROLS
-
   CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImageControls","controles.png");
   CEGUI::Window* sheetControls = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","controlsFrame");
   sheetControls->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0),CEGUI::UDim(0.6, 0)));
@@ -840,25 +977,26 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   sheetControls->setVisible(false);
   sheetControls->addChild(configWinControls);
 
-
   //RECORDS
-
   CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImageRecords","creditos.jpg");
   CEGUI::Window* sheetRecords = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","recordsFrame");
-  sheetRecords->setPosition(CEGUI::UVector2(CEGUI::UDim(0.01, 0),CEGUI::UDim(0.6, 0)));
-  sheetRecords->setSize(CEGUI::USize(CEGUI::UDim(0.70, 0), CEGUI::UDim(0.35, 0)));
+  sheetRecords->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0),CEGUI::UDim(0.1, 0)));
+  sheetRecords->setSize(CEGUI::USize(CEGUI::UDim(0.70, 0), CEGUI::UDim(0.70, 0)));
   sheetRecords->setProperty("Image","BackgroundImageRecords");
 
   //Nuevo Layout
   CEGUI::Window* configWinRecords = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("records.layout");
+  configWinRecords->getChild("textRecords")->setText("Records");
 
   CEGUI::Window* exitButtonRecord = configWinRecords->getChild("exitButton");
-  exitButtonRecord->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MyFrameListener::quit,this));
+  exitButtonRecord->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MyFrameListener::showRecords,this));
+  sheetRecords->setVisible(false);
   sheetRecords->addChild(configWinRecords);
 
 
   //GAME OVER (JUGADOR)
   CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImageGameOver","gameover.png");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImagePlayer","gameoverPlayer.png");
   CEGUI::Window* sheetGameOver = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","gameoverFrame");
   sheetGameOver->setPosition(CEGUI::UVector2(CEGUI::UDim(0.06, 0),CEGUI::UDim(0, 0)));
   sheetGameOver->setSize(CEGUI::USize(CEGUI::UDim(0.90, 0), CEGUI::UDim(0.95, 0)));
@@ -869,7 +1007,6 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   //Nuevo Layout
   CEGUI::Window* configWinGameOver = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("gameoverPlayer.layout");
   
-
   CEGUI::Window* exitButtonGameOver = configWinGameOver->getChild("exitButton");
   exitButtonGameOver->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MyFrameListener::quit,this));
   exitButtonGameOver->setXPosition(CEGUI::UDim(0.60f, 0.0f)); 
@@ -881,11 +1018,12 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   restartButton->setYPosition(CEGUI::UDim(0.85f, 0.0f));
   sheetGameOver->setVisible(false);
   sheetGameOver->addChild(configWinGameOver);
-	
+
   //Añado los botones a la pantalla
   sheet2->addChild(configWin2);
   sheet2->addChild(sheetControls);
   sheet2->addChild(sheetGameOver);
+  sheet2->addChild(sheetRecords);
   
   CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(sheet2);
   
@@ -895,22 +1033,27 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
 void MyFrameListener::MoverBarco(string Barco,OIS::Keyboard* _keyboard,SceneManager* _sceneManager,int limSup,int limInf,int limDer,int limIzq,int desp){
   
   SceneNode* aux =static_cast<SceneNode*>(_sceneManager->getRootSceneNode()->getChild("Tablero")->getChild(Barco));
+  
+  if(Vector3(aux->getPosition()).z==-limSup || Vector3(aux->getPosition()).z==-limSup+22 || 
+      Vector3(aux->getPosition()).z==-limSup+44){//Para la transparencia
+          emi->setTransparency(0.7f);
+      }
 
-  if(_keyboard->isKeyDown(OIS::KC_R) && canRotate==true ){//Si pulso la R rotamos 90 grados
-        canRotate=false;
-        aux->yaw(Ogre::Degree(90));
-        rotation++;
-        if(rotation>4){
-          rotation=1;
+  if(_keyboard->isKeyDown(OIS::KC_R) && g_canRotate==true ){//Si pulso la R rotamos 90 grados
+        g_canRotate=false;
+        aux->yaw(Ogre::Degree(-90));
+        g_rotation++;
+        if(g_rotation>4){
+          g_rotation=1;
         }
       }
       if(_keyboard->isKeyDown(OIS::KC_R) == false){//La tecla se ha levantado
-        canRotate=true;
+        g_canRotate=true;
       }
       //Movimiento del Barco
       //Arriba
-      if(_keyboard->isKeyDown(OIS::KC_UP) && UPkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
-        UPkeyDown=false;//Para detectar una unica pulsacion
+      if(_keyboard->isKeyDown(OIS::KC_UP) && g_UPkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
+        g_UPkeyDown=false;//Para detectar una unica pulsacion
         if(i>0){//mientras no llegue al limite cambio las posicion
           i--;//cambio la posicion
         }
@@ -920,16 +1063,14 @@ void MyFrameListener::MoverBarco(string Barco,OIS::Keyboard* _keyboard,SceneMana
             aux->setPosition(Vector3(aux->getPosition())+=Vector3(0,0,-desp));//Me muevo
             emi->setTransparency(0.0f);
         }
-        if(Vector3(aux->getPosition()).z==-limSup){//Para la transparencia
-            emi->setTransparency(0.7f);
-        }
+        
       }
       if(_keyboard->isKeyDown(OIS::KC_UP)==false){//La tecla se ha levantado
-        UPkeyDown=true;//Puedo volver a pulsar 
+        g_UPkeyDown=true;//Puedo volver a pulsar 
       }
       //Abajo
-      if(_keyboard->isKeyDown(OIS::KC_DOWN) && DOWNkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
-        DOWNkeyDown=false;
+      if(_keyboard->isKeyDown(OIS::KC_DOWN) && g_DOWNkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
+        g_DOWNkeyDown=false;
         if(i<8){//mientras no llegue al limite cambio las posicion
           i++;//cambio la posicion
         }
@@ -939,13 +1080,14 @@ void MyFrameListener::MoverBarco(string Barco,OIS::Keyboard* _keyboard,SceneMana
             aux->setPosition(Vector3(aux->getPosition())+=Vector3(0,0,desp));//Me muevo
             emi->setTransparency(0.0f);
         }
+
       }
       if(_keyboard->isKeyDown(OIS::KC_DOWN)==false){//La tecla se ha levantado
-        DOWNkeyDown=true;
+        g_DOWNkeyDown=true;
       }
       //Izquierda
-      if(_keyboard->isKeyDown(OIS::KC_LEFT) && LEFTkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
-        LEFTkeyDown=false;
+      if(_keyboard->isKeyDown(OIS::KC_LEFT) && g_LEFTkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
+        g_LEFTkeyDown=false;
         if(j>0){//mientras no llegue al limite cambio las posicion
           j--;//cambio la posicion
         }
@@ -957,11 +1099,11 @@ void MyFrameListener::MoverBarco(string Barco,OIS::Keyboard* _keyboard,SceneMana
         }
       }
       if(_keyboard->isKeyDown(OIS::KC_LEFT)==false){//La tecla se ha levantado
-        LEFTkeyDown=true;
+        g_LEFTkeyDown=true;
       }
       //Derecha
-      if(_keyboard->isKeyDown(OIS::KC_RIGHT) && RIGHTkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
-        RIGHTkeyDown=false;
+      if(_keyboard->isKeyDown(OIS::KC_RIGHT) && g_RIGHTkeyDown == true){//Si la tecla esta pulsada se detecta una unica pulsacion
+        g_RIGHTkeyDown=false;
         if(j<8){//mientras no llegue al limite cambio las posicion
           j++;//cambio la posicion
         }
@@ -972,65 +1114,216 @@ void MyFrameListener::MoverBarco(string Barco,OIS::Keyboard* _keyboard,SceneMana
         }
       }
       if(_keyboard->isKeyDown(OIS::KC_RIGHT)==false){//La tecla se ha levantado
-        RIGHTkeyDown=true;
+        g_RIGHTkeyDown=true;
       }
 }
 
 
   void MyFrameListener::resetGame(){
 
-  	
+    state=gameOver;
 
+    updateRecords(g_puntuacion);
 
-  	CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-  	sheet->getChild("gameoverFrame")->setVisible(true);
-  	sheet->getChild("gameoverFrame")->getChild("gameOver")->getChild("restartButton")->activate();
-  	sheet->getChild("gameoverFrame")->getChild("gameOver")->getChild("exitButton")->activate();
-	  sheet->getChild("Cfg")->getChild("exitButton")->setVisible(false);
-	  sheet->getChild("Cfg")->getChild("recordsButton")->setVisible(false);
-	  sheet->getChild("Cfg")->getChild("Text1")->setVisible(false);
-	  sheet->getChild("Cfg")->getChild("nextShipButton")->setVisible(false);
-	  sheet->getChild("Cfg")->getChild("controlsButton")->setVisible(false);
+    CEGUI::Window* sheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
+    sheet->getChild("gameoverFrame")->setVisible(true);
+    sheet->getChild("gameoverFrame")->getChild("gameOver")->getChild("restartButton")->activate();
+    sheet->getChild("gameoverFrame")->getChild("gameOver")->getChild("exitButton")->activate();
+    sheet->getChild("Cfg")->getChild("exitButton")->setVisible(false);
+    sheet->getChild("Cfg")->getChild("recordsButton")->setVisible(false);
+    sheet->getChild("Cfg")->getChild("Text1")->setVisible(false);
+    sheet->getChild("Cfg")->getChild("nextShipButton")->setVisible(false);
+    sheet->getChild("Cfg")->getChild("controlsButton")->setVisible(false);
 
-	  SceneNode* auxPlayer =static_cast<SceneNode*>(_sceneManager->getRootSceneNode()->getChild("Tablero"));
+    SceneNode* auxPlayer =static_cast<SceneNode*>(_sceneManager->getRootSceneNode()->getChild("Tablero"));
+    
+    auxPlayer->getCreator()->destroySceneNode("Barco");
+    auxPlayer->getCreator()->destroySceneNode("Barco2");
+    auxPlayer->getCreator()->destroySceneNode("Barco3");
+    auxPlayer->getCreator()->destroySceneNode("Barco4");
+    auxPlayer->getCreator()->destroySceneNode("Barco5");
 
-	  auxPlayer->getCreator()->destroySceneNode("Barco");
-	  auxPlayer->getCreator()->destroySceneNode("Barco2");
-	 // auxPlayer->getCreator()->destroySceneNode("Barco3");
-	  //auxPlayer->getCreator()->destroySceneNode("Barco4");
-	 // auxPlayer->getCreator()->destroySceneNode("Barco5");
-
-		Ogre::SceneNode::ChildNodeIterator itPlayer = _sceneManager->getRootSceneNode()->getChild("Tablero")->getChildIterator();
-		Ogre::SceneNode::ChildNodeIterator itEnemy = _sceneManager->getRootSceneNode()->getChild("Tablero Enemigo")->getChildIterator();
-    while ( itPlayer.hasMoreElements() || itEnemy.hasMoreElements() ) {
-	     SceneNode* childPlayer = static_cast<SceneNode*>(itPlayer.getNext());
-	     SceneNode* childEnemy = static_cast<SceneNode*>(itEnemy.getNext());
-
-	    if(Ogre::StringUtil::endsWith(childPlayer->getName(),"NodeCubeJugador",true) 
-	    	|| Ogre::StringUtil::endsWith(childEnemy->getName(),"NodeCube",true)){
-	      Entity* entPlayer = static_cast<Entity*>(childPlayer->getAttachedObject(0));
-	      Entity* entEnemy = static_cast<Entity*>(childEnemy->getAttachedObject(0));
-		    entPlayer->setMaterialName("agua");
-		    entEnemy->setMaterialName("agua");
-	        
+    Ogre::SceneNode::ChildNodeIterator itPlayer = _sceneManager->getRootSceneNode()->getChild("Tablero")->getChildIterator();
+    Ogre::SceneNode::ChildNodeIterator itEnemy = _sceneManager->getRootSceneNode()->getChild("Tablero Enemigo")->getChildIterator();
+    
+    while ( itPlayer.hasMoreElements() ) {
+       SceneNode* childPlayer = static_cast<SceneNode*>(itPlayer.getNext());
+      if(Ogre::StringUtil::endsWith(childPlayer->getName(),"NodeCubeJugador",true)){
+        Entity* entPlayer = static_cast<Entity*>(childPlayer->getAttachedObject(0));
+        entPlayer->setMaterialName("agua");   
       }
     }
 
-    state=posicionando1;
-    shipLocated=false,
-    //Falta reiniciar las matrices de los tableros
-    boardPlayer.cleanBoard();
-    cout << "Tablero Jugador reset"<<endl;
-    boardPlayer.printBoard();
-
-    boardEnemy.cleanBoard();
-    cout << "Tablero Enemy reset"<<endl;
-    boardEnemy.printBoard();
-
-    //Cambio el texto de la interfaz
-    CEGUI::Window* Auxsheet=CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
-    CEGUI::Window* AuxconfigWin2=Auxsheet->getChildAtIdx(0);
-    AuxconfigWin2->getChild("Text1")->setText("Juguemos de nuevo!\nPulsa Siguiente");
-
-		
+    while ( itEnemy.hasMoreElements() ) {
+      SceneNode* childEnemy = static_cast<SceneNode*>(itEnemy.getNext());
+      if(Ogre::StringUtil::endsWith(childEnemy->getName(),"NodeCube",true)){
+        Entity* entEnemy = static_cast<Entity*>(childEnemy->getAttachedObject(0));
+        entEnemy->setMaterialName("agua");  
+      }
+    }
   }
+
+  string MyFrameListener::readRecords(){
+    
+    fstream fichero;//Fichero
+    string frase;//Auxiliar
+
+    string res ="";//Resultado
+
+    fichero.open ( "Records.txt" , ios::in);
+    int i =0;
+    if (fichero.is_open()) {
+        while (! fichero.eof() ) {
+            getline (fichero,frase);
+            int aux;
+            istringstream  buffer(frase);
+            buffer >>aux;
+            cout << i << "-> " << aux << endl;
+            i++;
+            res+= Ogre::StringConverter::toString(i)+" -> "+Ogre::StringConverter::toString(aux)+"\n";
+        }    
+    }else{
+        cout << "Fichero inexistente o faltan permisos para abrirlo, creando archivo e records..." << endl;
+        ofstream archivo;  // objeto de la clase ofstream
+        archivo.open("Records.txt");
+        for(int i=0;i<9;i++){
+            archivo  << "000" << endl;
+        }
+        archivo.close();
+        fichero.open ( "Records.txt" , ios::in);
+        int i =0;
+        if (fichero.is_open()) {
+            while (! fichero.eof() ) {
+                getline (fichero,frase);
+                int aux;
+                istringstream  buffer(frase);
+                buffer >>aux;
+                cout << i << "-> " << aux << endl;
+                i++;
+                res+= Ogre::StringConverter::toString(i)+" -> "+Ogre::StringConverter::toString(aux)+"\n";
+            }   
+        }
+    }
+    return res; 
+}
+
+void MyFrameListener::updateRecords(int g_puntuacion){
+    
+    fstream fichero;//Fichero
+    string frase;//Auxiliar
+    bool reWrite=false;//Si debemos re-escribir el fichero o no
+    std::vector <int> g_puntuaciones;//vector para guardar g_puntuaciones
+
+    fichero.open ( "Records.txt" , ios::in);
+    if (fichero.is_open()) {
+        while (! fichero.eof() ) {
+            getline (fichero,frase);
+            int aux;
+            istringstream  buffer(frase);
+            buffer >>aux;
+            if(g_puntuacion>aux && reWrite==false){//si la g_puntuacion es mayor que la vista re-escribo el fichero
+                reWrite=true;
+                cout << "Hay que re-escribir el fichero" << endl;
+                g_puntuaciones.push_back(g_puntuacion);
+                g_puntuaciones.push_back(aux);
+            }else{
+                g_puntuaciones.push_back(aux);
+            }
+        }
+        
+        //vector g_puntuaciones
+        std::vector<int>::iterator it;
+        int i=0;
+        for (it = g_puntuaciones.begin(); it != g_puntuaciones.end() && i < 10; ++it) {
+            int aux=*it;
+            i++;
+        }
+        fichero.close();
+        if(reWrite){
+            //Re-escribimos el fichero
+            ofstream archivo;  // objeto de la clase ofstream
+            archivo.open("Records.txt");
+            //vector g_puntuaciones
+            std::vector<int>::iterator it;
+            int i=0;
+            for (it = g_puntuaciones.begin(); it != g_puntuaciones.end() && i < 10; ++it) {
+                int aux=*it;
+                archivo  << aux << endl;
+                i++;
+            }
+            archivo.close();
+            //Vuelvo a leer el achivo para ver como queda
+            fichero.open ( "Records.txt" , ios::in);
+            cout << "---Resultado!!!--- "  << endl;
+            while (! fichero.eof() ) {
+                getline (fichero,frase);
+                int aux;
+                istringstream  buffer(frase);
+                buffer >>aux;
+                cout << "g_puntuacion " << aux << endl;
+            }
+        }
+        g_puntuaciones.clear();
+        reWrite=false;
+    }else{
+        cout << "Fichero inexistente o faltan permisos para abrirlo, creando archivo e records..." << endl;
+        ofstream archivo;  // objeto de la clase ofstream
+        archivo.open("Records.txt");
+        for(int i=0;i<9;i++){
+            archivo  << "000" << endl;
+        }
+        archivo.close();
+        //ahora se debe leer el fichero y ver si se debe re-escribir
+        fichero.open ( "Records.txt" , ios::in);
+        while (! fichero.eof() ) {
+            getline (fichero,frase);
+            int aux;
+            istringstream  buffer(frase);
+            buffer >>aux;
+            if(g_puntuacion>aux && reWrite==false){//si la g_puntuacion es mayor que la vista re-escribo el fichero
+                reWrite=true;
+                cout << "Hay que re-escribir el fichero" << endl;
+                g_puntuaciones.push_back(g_puntuacion);
+                g_puntuaciones.push_back(aux);
+            }else{
+                g_puntuaciones.push_back(aux);
+            }
+        }
+        //vector g_puntuaciones
+        std::vector<int>::iterator it;
+        int i=0;
+        for (it = g_puntuaciones.begin(); it != g_puntuaciones.end() && i < 10; ++it) {
+            int aux=*it;
+            i++;
+        }
+        fichero.close();
+        if(reWrite){
+            //Re-escribimos el fichero
+            ofstream archivo;  // objeto de la clase ofstream
+            archivo.open("Records.txt");
+            //vector g_puntuaciones
+            std::vector<int>::iterator it;
+            int i=0;
+            for (it = g_puntuaciones.begin(); it != g_puntuaciones.end() && i < 10; ++it) {
+                int aux=*it;
+                archivo  << aux << endl;
+                i++;
+            }
+            archivo.close();
+            //Vuelvo a leer el achivo para ver como queda
+            fichero.open ( "Records.txt" , ios::in);
+            cout << "---Resultado!!!--- "  << endl;
+            while (! fichero.eof() ) {
+                getline (fichero,frase);
+                int aux;
+                istringstream  buffer(frase);
+                buffer >>aux;
+                cout << "g_puntuacion " << aux << endl;
+            }
+        }
+        g_puntuaciones.clear();
+        reWrite=false;
+    }
+}
+
+

@@ -3,8 +3,6 @@
 #include <CEGUI.h>
 #include <string>
 
-
-
 using namespace Ogre;
 using namespace std;
 
@@ -30,6 +28,7 @@ private:
   void setNextShip(string barco);
 
 
+
   bool _quit;
   float _timeSinceLastFrame;
 
@@ -38,6 +37,9 @@ private:
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
 
   Ray setRayQuery(int posx, int posy, uint32 mask);
+
+  string readRecords();
+  void updateRecords(int puntuacion);
 
 
 public:

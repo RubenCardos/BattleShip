@@ -15,13 +15,16 @@
 
 #include "MyApp.h" 
 #include "CEGUI.h"
-
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 using namespace CEGUI;
 
 
 MyApp::MyApp() {
   _sceneManager = NULL;
   _framelistener = NULL;
+
+  _initSDL();
 }
 
 MyApp::~MyApp() {
@@ -37,6 +40,10 @@ int MyApp::start() {
   
   Ogre::RenderWindow* window = _root->initialise(true,"BattleShip");
   _sceneManager = _root->createSceneManager(Ogre::ST_GENERIC);
+
+  //Sonido
+  _pTrackManager = OGRE_NEW TrackManager;
+  _pSoundFXManager = OGRE_NEW SoundFXManager;
   
   //Camara
   Ogre::Camera* cam = _sceneManager->createCamera("MainCamera");
@@ -63,6 +70,9 @@ int MyApp::start() {
   //Creamos interfaces en CEGUI
   createGUI();
 
+  // Reproducción del track principal...
+  _mainTrack->play();
+
   _root->startRendering();
 
   return 0;
@@ -88,6 +98,11 @@ void MyApp::loadResources() {
 }
 
 void MyApp::createScene() {
+
+  //Sonido
+  // Carga del sonido.
+  _mainTrack = _pTrackManager->load("BGMusic.mp3");
+  _simpleEffect = _pSoundFXManager->load("Shoot.wav");
 
   _sceneManager -> setAmbientLight ( Ogre :: ColourValue ( 0 ,  0 ,  0 ) ) ; 
   _sceneManager -> setShadowTechnique ( Ogre :: SHADOWTYPE_STENCIL_ADDITIVE ) ; 
@@ -178,7 +193,23 @@ void MyApp::createScene() {
   
 }
 
-
+bool MyApp::_initSDL () {
+  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+    return false;
+  }
+  // Llamar a  SDL_Quit al terminar.
+  atexit(SDL_Quit);
+ 
+  // Inicializando SDL mixer...
+  if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT,MIX_DEFAULT_CHANNELS, 4096) < 0) {
+    return false;
+  }
+ 
+  // Llamar a Mix_CloseAudio al terminar.
+  atexit(Mix_CloseAudio);
+ 
+  return true;    
+}
 
 void MyApp::createDecorationLeft(){
 
