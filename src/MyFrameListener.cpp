@@ -973,9 +973,9 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   sheetControls->addChild(configWinControls);
 
   //RECORDS
-  CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImageRecords","creditos.jpg");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImageRecords","records.jpg");
   CEGUI::Window* sheetRecords = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","recordsFrame");
-  sheetRecords->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0),CEGUI::UDim(0.1, 0)));
+  sheetRecords->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0),CEGUI::UDim(0.3, 0)));
   sheetRecords->setSize(CEGUI::USize(CEGUI::UDim(0.70, 0), CEGUI::UDim(0.70, 0)));
   sheetRecords->setProperty("Image","BackgroundImageRecords");
 
