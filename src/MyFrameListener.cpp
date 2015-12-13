@@ -975,8 +975,8 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
   //RECORDS
   CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImageRecords","records.jpg");
   CEGUI::Window* sheetRecords = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","recordsFrame");
-  sheetRecords->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0),CEGUI::UDim(0.3, 0)));
-  sheetRecords->setSize(CEGUI::USize(CEGUI::UDim(0.70, 0), CEGUI::UDim(0.70, 0)));
+  sheetRecords->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0),CEGUI::UDim(0.15, 0)));
+  sheetRecords->setSize(CEGUI::USize(CEGUI::UDim(0.70, 0), CEGUI::UDim(0.80, 0)));
   sheetRecords->setProperty("Image","BackgroundImageRecords");
 
   //Nuevo Layout
@@ -985,6 +985,8 @@ bool MyFrameListener::play(const CEGUI::EventArgs &e)
 
   CEGUI::Window* exitButtonRecord = configWinRecords->getChild("exitButton");
   exitButtonRecord->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MyFrameListener::showRecords,this));
+  exitButtonRecord->setXPosition(CEGUI::UDim(0.30f, 0.0f)); 
+  exitButtonRecord->setYPosition(CEGUI::UDim(0.92f, 0.0f));
   sheetRecords->setVisible(false);
   sheetRecords->addChild(configWinRecords);
 
